@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seyahatlerim - TicketApp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-title">Seyahatlerim</div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 20px; padding-bottom: 80px;">
+        <div id="biletler-container">
+            <div style="text-align: center; padding: 40px; color: var(--text-light);">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                <p>Biletleriniz yükleniyor...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-magnifying-glass nav-icon"></i>
+            <span>Ara</span>
+        </a>
+        <a href="my_trips.html" class="nav-item active">
+            <i class="fa-solid fa-suitcase nav-icon"></i>
+            <span>Seyahatlerim</span>
+        </a>
+        <a href="campaigns.html" class="nav-item">
+            <i class="fa-solid fa-gift nav-icon"></i>
+            <span>Kampanyalar</span>
+        </a>
+        <a href="help.html" class="nav-item">
+            <i class="fa-regular fa-circle-question nav-icon"></i>
+            <span>Yardım</span>
+        </a>
+        <a href="account.html" class="nav-item">
+            <i class="fa-solid fa-user nav-icon"></i>
+            <span>Hesabım</span>
+        </a>
+    </nav>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('biletler-container');
+            
+            try {
+                const biletler = await window.API.Bilet.listele();
+                
+                if (biletler.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-light);">
+                            <i class="fa-solid fa-suitcase" style="font-size: 3rem; margin-bottom: 15px; color: #ddd;"></i>
+                            <p>Henüz bir seyahatiniz bulunmuyor.</p>
+                            <a href="index.html" class="btn-primary"
+                                style="display: inline-block; width: auto; margin-top: 15px; text-decoration: none;">Bilet Ara</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+                biletler.forEach(bilet => {
+                    const biletCard = document.createElement('div');
+                    biletCard.className = 'ticket-card';
+                    biletCard.style.marginBottom = '20px';
+                    
+                    const formattedPrice = new Intl.NumberFormat('tr-TR', { 
+                        style: 'currency', 
+                        currency: 'TRY',
+                        minimumFractionDigits: 0 
+                    }).format(bilet.fiyat);
+
+                    const sefer = bilet.sefer || {};
+                    const yolcu = bilet.yolcu || {};
+                    const koltuk = bilet.koltuk || {};
+
+                    biletCard.innerHTML = `
+                        <div class="ticket-header">
+                            <div style="font-weight: 800; font-size: 1.1rem;">
+                                ${sefer.kalkisYeri || sefer.kalkis} → ${sefer.varisYeri || sefer.varis}
+                            </div>
+                            <div class="ticket-price">${formattedPrice}</div>
+                        </div>
+                        <div class="ticket-body">
+                            <div class="time-info">
+                                <div class="time">${sefer.saat || '--:--'}</div>
+                                <div class="location">${sefer.kalkisYeri || sefer.kalkis}</div>
+                            </div>
+                            <div class="duration-info">
+                                <div class="duration-line"></div>
+                                <div class="duration-text"><i class="fa-regular fa-calendar"></i> ${sefer.tarih || 'Tarih'}</div>
+                            </div>
+                            <div class="time-info">
+                                <div class="time">Koltuk ${koltuk.koltukNo || 'N/A'}</div>
+                                <div class="location">${yolcu.adSoyad || 'Yolcu'}</div>
+                            </div>
+                        </div>
+                        <div class="ticket-footer">
+                            <div style="display: flex; gap: 10px;">
+                                <span style="padding: 8px 15px; background: ${bilet.durum === 'AKTIF' ? '#4caf50' : '#f44336'}; color: white; border-radius: 5px; font-size: 0.9rem;">
+                                    ${bilet.durum === 'AKTIF' ? 'Aktif' : 'İptal'}
+                                </span>
+                                ${bilet.durum === 'AKTIF' ? 
+                                    `<button onclick="iptalEt('${bilet.id}')" style="padding: 8px 15px; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem;">İptal Et</button>` 
+                                    : ''}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(biletCard);
+                });
+            } catch (error) {
+                console.error('Bilet yükleme hatası:', error);
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #f44336;">
+                        <i class="fa-solid fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Biletler yüklenirken bir hata oluştu.</p>
+                        <a href="index.html" class="btn-primary"
+                            style="display: inline-block; width: auto; margin-top: 15px; text-decoration: none;">Ana Sayfaya Dön</a>
+                    </div>
+                `;
+            }
+        });
+
+        async function iptalEt(biletId) {
+            if (!confirm('Bu bileti iptal etmek istediğinize emin misiniz?')) {
+                return;
+            }
+
+            try {
+                await window.API.Bilet.iptal(biletId);
+                alert('Bilet başarıyla iptal edildi.');
+                location.reload();
+            } catch (error) {
+                console.error('İptal hatası:', error);
+                alert('Bilet iptal edilirken bir hata oluştu: ' + error.message);
+            }
+        }
+    </script>
+</body>
+
+</html>

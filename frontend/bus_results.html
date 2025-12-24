@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otobüs Bileti - TicketApp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="result-header">
+        <div class="container">
+            <div style="display: flex; align-items: center; padding: 0 10px; margin-bottom: 10px;">
+                <a href="index.html" style="color: white; margin-right: 15px;"><i
+                        class="fa-solid fa-chevron-left"></i></a>
+                <div class="route-info" style="margin: 0;">
+                    Malatya <i class="fa-solid fa-arrow-right-arrow-left route-arrow" style="font-size: 0.8rem;"></i>
+                    Mersin
+                </div>
+            </div>
+
+            <div class="date-nav">
+                <button class="date-btn"><i class="fa-solid fa-chevron-left"></i> Önceki</button>
+                <div class="current-date"><i class="fa-regular fa-calendar"></i> 16 Aralık Salı</div>
+                <button class="date-btn">Sonraki <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="container" style="display: flex; gap: 10px; overflow-x: auto; padding: 0;">
+            <button class="filter-btn active"><i class="fa-solid fa-arrow-down-short-wide"></i> SIRALA</button>
+            <button class="filter-btn active"><i class="fa-solid fa-sliders"></i> FİLTRE</button>
+            <button class="filter-btn">2+1</button>
+            <button class="filter-btn">Sabaha Karşı</button>
+        </div>
+    </div>
+
+    <main class="container" style="padding-top: 20px; padding-bottom: 80px;">
+        <div id="seferler-container">
+            <div style="text-align: center; padding: 40px; color: var(--text-light);">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                <p>Seferler yükleniyor...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-magnifying-glass nav-icon"></i>
+            <span>Ara</span>
+        </a>
+        <a href="my_trips.html" class="nav-item">
+            <i class="fa-solid fa-suitcase nav-icon"></i>
+            <span>Seyahatlerim</span>
+        </a>
+        <a href="campaigns.html" class="nav-item">
+            <i class="fa-solid fa-gift nav-icon"></i>
+            <span>Kampanyalar</span>
+        </a>
+        <a href="help.html" class="nav-item">
+            <i class="fa-regular fa-circle-question nav-icon"></i>
+            <span>Yardım</span>
+        </a>
+        <a href="account.html" class="nav-item">
+            <i class="fa-solid fa-user nav-icon"></i>
+            <span>Hesabım</span>
+        </a>
+    </nav>
+
+    <script src="js/api.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const kalkis = urlParams.get('kalkis') || '';
+        const varis = urlParams.get('varis') || '';
+        const tarih = urlParams.get('tarih') || '';
+        const seferlerJson = urlParams.get('seferler');
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('seferler-container');
+            const routeInfo = document.querySelector('.route-info');
+            
+            if (routeInfo) {
+                routeInfo.innerHTML = `${kalkis} <i class="fa-solid fa-arrow-right-arrow-left route-arrow" style="font-size: 0.8rem;"></i> ${varis}`;
+            }
+
+            let seferler = [];
+            
+            if (seferlerJson) {
+                try {
+                    seferler = JSON.parse(decodeURIComponent(seferlerJson));
+                } catch (e) {
+                    console.error('Sefer parse hatası:', e);
+                }
+            }
+
+            if (seferler.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-light);">
+                        <i class="fa-solid fa-search" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Bu tarih için sefer bulunamadı.</p>
+                        <a href="index.html" class="btn-primary" style="display: inline-block; margin-top: 15px; text-decoration: none;">Yeni Arama Yap</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            const colors = ['#006400', '#d32f2f', '#b8860b', '#1976d2', '#7b1fa2'];
+            
+            seferler.forEach((sefer, index) => {
+                const color = colors[index % colors.length];
+                const formattedPrice = new Intl.NumberFormat('tr-TR', { 
+                    style: 'currency', 
+                    currency: 'TRY',
+                    minimumFractionDigits: 0 
+                }).format(sefer.fiyat);
+                
+                const kalkisSaat = sefer.saat || '--:--';
+                const varisSaat = sefer.varisSaat || '--:--';
+                
+                const seferCard = document.createElement('div');
+                seferCard.className = 'ticket-card';
+                seferCard.innerHTML = `
+                    <div class="ticket-header">
+                        <div style="font-weight: 800; font-style: italic; color: ${color}; font-size: 1.2rem;">
+                            Sefer ${sefer.id ? sefer.id.substring(0, 8) : 'N/A'}
+                        </div>
+                        <div class="ticket-price">${formattedPrice}</div>
+                    </div>
+                    <div class="ticket-body">
+                        <div class="time-info">
+                            <div class="time">${kalkisSaat}</div>
+                            <div class="location">${sefer.kalkisYeri || sefer.kalkis}</div>
+                        </div>
+                        <div class="duration-info">
+                            <div class="duration-line"></div>
+                            <div class="duration-text"><i class="fa-regular fa-clock"></i> Süre</div>
+                        </div>
+                        <div class="time-info">
+                            <div class="time">${varisSaat}</div>
+                            <div class="location">${sefer.varisYeri || sefer.varis}</div>
+                        </div>
+                    </div>
+                    <div class="ticket-footer">
+                        <a href="checkout.html?seferId=${sefer.id}&kalkis=${encodeURIComponent(sefer.kalkisYeri || sefer.kalkis)}&varis=${encodeURIComponent(sefer.varisYeri || sefer.varis)}&tarih=${encodeURIComponent(sefer.tarih)}&saat=${encodeURIComponent(kalkisSaat)}&fiyat=${sefer.fiyat}"
+                            class="examine-btn" style="text-decoration: none;">İncele <i class="fa-solid fa-chevron-right"></i></a>
+                    </div>
+                `;
+                container.appendChild(seferCard);
+            });
+        });
+    </script>
+</body>
+
+</html>

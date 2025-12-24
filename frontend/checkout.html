@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ödeme - TicketApp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="container" style="display: flex; align-items: center; padding: 1rem;">
+            <a href="javascript:history.back()" style="color: white; margin-right: 15px;"><i
+                    class="fa-solid fa-chevron-left"></i></a>
+            <div class="header-title" style="flex: 1; text-align: left;">Sefer Detayları</div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 20px; padding-bottom: 80px;">
+
+        <!-- Trip Summary -->
+        <div class="checkout-section">
+            <div class="section-title">GİDİŞ SEFERİ</div>
+            <div class="info-row">
+                <div class="info-label">Firma</div>
+                <div class="info-value" id="summary-company">Yükleniyor...</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Tarih</div>
+                <div class="info-value" id="summary-date">Yükleniyor...</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Saat</div>
+                <div class="info-value" id="summary-time">Yükleniyor...</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Güzergah</div>
+                <div class="info-value" id="summary-route">Yükleniyor...</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Koltuk</div>
+                <div class="info-value" id="summary-seat">Seçilmedi</div>
+            </div>
+        </div>
+
+        <!-- Seat Selection -->
+        <div class="checkout-section" id="seat-selection-section">
+            <div class="section-title">KOLTUK SEÇİMİ</div>
+            <div id="koltuk-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
+                <div style="text-align: center; padding: 20px; color: var(--text-light);">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Koltuklar yükleniyor...
+                </div>
+            </div>
+            <div style="margin-top: 15px; display: flex; gap: 15px; align-items: center; font-size: 0.9rem;">
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 20px; height: 20px; background: #4caf50; border-radius: 4px;"></div>
+                    <span>Boş</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 20px; height: 20px; background: #f44336; border-radius: 4px;"></div>
+                    <span>Dolu</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 20px; height: 20px; background: #ff9800; border-radius: 4px; border: 2px solid #ff9800;"></div>
+                    <span>Seçili</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Extra Services -->
+        <div class="checkout-section">
+            <div class="section-title">EK HİZMETLER</div>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="vip-checkbox" style="width: 20px; height: 20px;">
+                    <span>VIP Koltuk (+50 TL)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="sigorta-checkbox" style="width: 20px; height: 20px;">
+                    <span>Seyahat Sigortası (+30 TL)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="ikram-checkbox" style="width: 20px; height: 20px;">
+                    <span>İkram Servisi (+25 TL)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="bagaj-checkbox" style="width: 20px; height: 20px;">
+                    <span>Ek Bagaj (+70 TL)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="hizli-checkin-checkbox" style="width: 20px; height: 20px;">
+                    <span>Hızlı Check-in (+40 TL)</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Price Info -->
+        <div class="checkout-section">
+            <div class="section-title">FİYAT BİLGİLERİ</div>
+            <div class="info-row">
+                <div class="info-label">Bilet Fiyatı</div>
+                <div class="info-value" id="summary-price">0 TL</div>
+            </div>
+            <div class="info-row"
+                style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color);">
+                <div class="info-label" style="font-weight: 700; color: var(--text-color);">TOPLAM</div>
+                <div class="info-value" style="font-size: 1.2rem; color: var(--primary-color);" id="summary-total">0 TL
+                </div>
+            </div>
+            <div
+                style="margin-top: 15px; display: flex; align-items: center; gap: 10px; color: var(--primary-color); font-weight: 600; cursor: pointer;">
+                <i class="fa-solid fa-ticket"></i> Kupon Kodu Kullan
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="checkout-section">
+            <div class="section-title">İLETİŞİM BİLGİLERİ</div>
+            <div class="form-group">
+                <label class="form-label">E-Posta</label>
+                <input type="email" id="email-input" class="form-input" placeholder="E-posta adresiniz" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cep Telefonu</label>
+                <input type="tel" id="phone-input" class="form-input" placeholder="5XX XXX XX XX" required>
+            </div>
+        </div>
+
+        <!-- Passenger Info -->
+        <div class="checkout-section">
+            <div class="section-title">YOLCU BİLGİLERİ</div>
+            <div class="form-group">
+                <label class="form-label">Ad Soyad</label>
+                <input type="text" id="adsoyad-input" class="form-input" placeholder="Adınız Soyadınız" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">T.C. Kimlik No</label>
+                <input type="text" id="tcno-input" class="form-input" placeholder="11 haneli TC Kimlik No" maxlength="11" required>
+            </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="checkout-section">
+            <div class="section-title">ÖDEME BİLGİLERİ</div>
+            <div class="payment-form">
+                <div class="card-logos">
+                    <i class="fa-brands fa-cc-visa" style="font-size: 2rem; color: #1a1f71;"></i>
+                    <i class="fa-brands fa-cc-mastercard" style="font-size: 2rem; color: #eb001b;"></i>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kart Numarası</label>
+                    <input type="text" class="form-input" placeholder="XXXX XXXX XXXX XXXX">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Son Kul. Tarihi</label>
+                        <input type="text" class="form-input" placeholder="AA/YY">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">CVC2</label>
+                        <input type="text" class="form-input" placeholder="XXX">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="pay-btn" id="pay-button" onclick="handlePayment()">
+            <span>Güvenli Ödeme Yap</span>
+            <span id="btn-total">0 TL</span>
+        </button>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-magnifying-glass nav-icon"></i>
+            <span>Ara</span>
+        </a>
+        <a href="my_trips.html" class="nav-item">
+            <i class="fa-solid fa-suitcase nav-icon"></i>
+            <span>Seyahatlerim</span>
+        </a>
+        <a href="campaigns.html" class="nav-item">
+            <i class="fa-solid fa-gift nav-icon"></i>
+            <span>Kampanyalar</span>
+        </a>
+        <a href="help.html" class="nav-item">
+            <i class="fa-regular fa-circle-question nav-icon"></i>
+            <span>Yardım</span>
+        </a>
+        <a href="account.html" class="nav-item">
+            <i class="fa-solid fa-user nav-icon"></i>
+            <span>Hesabım</span>
+        </a>
+    </nav>
+
+    <script src="js/api.js"></script>
+    <script>
+        let selectedSeatId = null;
+        let selectedSeatNo = null;
+        let seferId = null;
+        let basePrice = 0;
+        let yolcuId = null;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        seferId = urlParams.get('seferId');
+        const kalkis = urlParams.get('kalkis') || 'Nereden';
+        const varis = urlParams.get('varis') || 'Nereye';
+        const tarih = urlParams.get('tarih') || 'Tarih Seçilmedi';
+        const saat = urlParams.get('saat') || '--:--';
+        basePrice = parseFloat(urlParams.get('fiyat')) || 0;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('summary-company').textContent = 'Sefer ' + (seferId ? seferId.substring(0, 8) : 'N/A');
+            document.getElementById('summary-time').textContent = saat;
+            document.getElementById('summary-route').textContent = `${kalkis} - ${varis}`;
+            document.getElementById('summary-date').textContent = tarih;
+
+            updatePrice();
+
+            if (seferId) {
+                await loadSeats();
+            } else {
+                document.getElementById('koltuk-container').innerHTML = 
+                    '<div style="text-align: center; padding: 20px; color: var(--text-light);">Sefer bilgisi bulunamadı.</div>';
+            }
+        });
+
+        async function loadSeats() {
+            try {
+                const koltuklar = await window.API.Koltuk.seferKoltuklari(seferId);
+                const container = document.getElementById('koltuk-container');
+                container.innerHTML = '';
+
+                if (koltuklar.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-light);">Bu sefer için koltuk bulunamadı.</div>';
+                    return;
+                }
+
+                koltuklar.forEach(koltuk => {
+                    const seatBtn = document.createElement('button');
+                    seatBtn.className = 'seat-btn';
+                    seatBtn.textContent = koltuk.koltukNo;
+                    seatBtn.style.cssText = `
+                        padding: 15px;
+                        border: 2px solid #ddd;
+                        border-radius: 8px;
+                        background: ${koltuk.durum === 'DOLU' ? '#f44336' : '#4caf50'};
+                        color: white;
+                        font-weight: bold;
+                        cursor: ${koltuk.durum === 'DOLU' ? 'not-allowed' : 'pointer'};
+                        opacity: ${koltuk.durum === 'DOLU' ? '0.6' : '1'};
+                    `;
+
+                    if (koltuk.durum !== 'DOLU') {
+                        seatBtn.onclick = () => selectSeat(koltuk.id, koltuk.koltukNo, seatBtn);
+                    }
+
+                    container.appendChild(seatBtn);
+                });
+            } catch (error) {
+                console.error('Koltuk yükleme hatası:', error);
+                document.getElementById('koltuk-container').innerHTML = 
+                    '<div style="text-align: center; padding: 20px; color: #f44336;">Koltuklar yüklenirken hata oluştu.</div>';
+            }
+        }
+
+        function selectSeat(seatId, seatNo, buttonElement) {
+            selectedSeatId = seatId;
+            selectedSeatNo = seatNo;
+            document.getElementById('summary-seat').textContent = seatNo;
+
+            document.querySelectorAll('.seat-btn').forEach(btn => {
+                if (btn !== buttonElement && btn.style.background !== '#f44336') {
+                    btn.style.background = '#4caf50';
+                    btn.style.border = '2px solid #ddd';
+                }
+            });
+
+            buttonElement.style.background = '#ff9800';
+            buttonElement.style.border = '2px solid #ff9800';
+        }
+
+        function updatePrice() {
+            let total = basePrice;
+            const formattedPrice = new Intl.NumberFormat('tr-TR', { 
+                style: 'currency', 
+                currency: 'TRY',
+                minimumFractionDigits: 0 
+            }).format(basePrice);
+
+            document.getElementById('summary-price').textContent = formattedPrice;
+            document.getElementById('summary-total').textContent = formattedPrice;
+            document.getElementById('btn-total').textContent = formattedPrice;
+        }
+
+        async function handlePayment() {
+            if (!selectedSeatId) {
+                alert('Lütfen bir koltuk seçin!');
+                return;
+            }
+
+            const email = document.getElementById('email-input').value;
+            const phone = document.getElementById('phone-input').value;
+            const adSoyad = document.getElementById('adsoyad-input').value;
+            const tcNo = document.getElementById('tcno-input').value;
+
+            if (!email || !phone || !adSoyad || !tcNo) {
+                alert('Lütfen tüm alanları doldurun!');
+                return;
+            }
+
+            if (tcNo.length !== 11) {
+                alert('TC Kimlik No 11 haneli olmalıdır!');
+                return;
+            }
+
+            const payButton = document.getElementById('pay-button');
+            payButton.disabled = true;
+            payButton.innerHTML = '<span>İşleniyor...</span>';
+
+            try {
+                const yolcu = {
+                    adSoyad: adSoyad,
+                    email: email,
+                    sifre: 'temp123',
+                    bakiye: 0
+                };
+
+                const yolcuResponse = await window.API.Yolcu.ekle(yolcu);
+                yolcuId = yolcuResponse.id || yolcuResponse.yolcuId;
+
+                const ekstraHizmetler = {
+                    vip: document.getElementById('vip-checkbox').checked,
+                    sigorta: document.getElementById('sigorta-checkbox').checked,
+                    ikram: document.getElementById('ikram-checkbox').checked,
+                    bagaj: document.getElementById('bagaj-checkbox').checked,
+                    hizliCheckIn: document.getElementById('hizli-checkin-checkbox').checked
+                };
+
+                const bilet = await window.API.Bilet.al(yolcuId, seferId, selectedSeatId, ekstraHizmetler);
+
+                const odeme = await window.API.Odeme.yap(bilet.id, bilet.fiyat, 'KREDI_KARTI');
+
+                alert('Biletiniz başarıyla oluşturuldu! Bilet ID: ' + bilet.id);
+                window.location.href = 'my_trips.html';
+            } catch (error) {
+                console.error('Ödeme hatası:', error);
+                alert('Ödeme işlemi sırasında bir hata oluştu: ' + error.message);
+                payButton.disabled = false;
+                payButton.innerHTML = '<span>Güvenli Ödeme Yap</span><span id="btn-total">' + document.getElementById('btn-total').textContent + '</span>';
+            }
+        }
+    </script>
+</body>
+
+</html>
